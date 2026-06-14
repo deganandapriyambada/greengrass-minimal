@@ -10,6 +10,9 @@ Manifests:
   - Platform:
       os: linux
 
+    Artifacts:
+      - URI: s3://greengrass-artifact-dega-test/com.example.HelloWorld/1.0.0/index.js
+
     Lifecycle:
       Run: |
         /usr/bin/node {artifacts:path}/index.js
