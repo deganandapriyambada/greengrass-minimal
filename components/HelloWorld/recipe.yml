@@ -11,6 +11,17 @@ ComponentDependencies:
     VersionRequirement: ">=2.0.0"
     DependencyType: HARD
 
+ComponentConfiguration:
+  DefaultConfiguration:
+    accessControl:
+      aws.greengrass.ipc.mqttproxy:
+        com.example.HelloWorld:mqtt:
+          policyDescription: "Allow publish to IoT Core via IPC"
+          operations:
+            - aws.greengrass#PublishToIoTCore
+          resources:
+            - "edge/telemetry"
+
 Manifests:
   - Platform:
       os: linux
@@ -21,14 +32,3 @@ Manifests:
     Lifecycle:
       Run: |
         /usr/bin/node {artifacts:path}/index.js
-
-    ComponentConfiguration:
-      DefaultConfiguration:
-        accessControl:
-          aws.greengrass.ipc.mqttproxy:
-            com.example.HelloWorld:mqtt:
-              policyDescription: "Allow publish to IoT Core via IPC"
-              operations:
-                - aws.greengrass#PublishToIoTCore
-              resources:
-                - "edge/telemetry"
