@@ -1,0 +1,15 @@
+RecipeFormatVersion: '2020-01-25'
+
+ComponentName: com.example.HelloWorld
+ComponentVersion: '1.0.0'
+
+ComponentDescription: Hello World NodeJS component
+ComponentPublisher: Dega
+
+Manifests:
+  - Platform:
+      os: linux
+
+    Lifecycle:
+      Run: |
+        node {artifacts:path}/index.js
