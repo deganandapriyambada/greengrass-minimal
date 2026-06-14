@@ -1,43 +1,32 @@
-const express = require("express");
-const { GreengrassCoreIPCClient } = require("aws-greengrass-core-sdk");
+const { mqtt, iot } = require("aws-iot-device-sdk-v2");
 
-console.log("Starting HTTP → IPC → IoT Core bridge");
+console.log("Starting IPC MQTT bridge");
 
-const app = express();
-app.use(express.json());
+const client = new mqtt.MqttClient();
 
-// IPC client (Greengrass local runtime)
-const ipcClient = new GreengrassCoreIPCClient();
+const connection = client.new_connection({
+    region: "ap-southeast-1",
+    clientId: "greengrass-edge"
+});
 
-app.post("/publish", async (req, res) => {
-    try {
+// Greengrass provides credentials automatically via IPC
+async function start() {
+    await connection.connect();
+
+    setInterval(async () => {
         const payload = {
             timestamp: new Date().toISOString(),
-            data: req.body
+            message: "heartbeat"
         };
 
-        console.log("Received HTTP request:", payload);
+        console.log("publishing:", payload);
 
-        await ipcClient.publishToIoTCore({
-            topicName: "edge/telemetry",
-            qos: "1",
-            payload: Buffer.from(JSON.stringify(payload))
-        });
+        await connection.publish(
+            "edge/telemetry",
+            JSON.stringify(payload),
+            mqtt.QoS.AtLeastOnce
+        );
+    }, 10000);
+}
 
-        res.json({ status: "published via IPC" });
-
-    } catch (err) {
-        console.error("IPC publish error:", err);
-        res.status(500).json({ error: err.message });
-    }
-});
-
-// HTTP server
-app.listen(3000, () => {
-    console.log("HTTP server running on port 3000");
-});
-
-// test stream
-setInterval(() => {
-    console.log("heartbeat:", new Date().toISOString());
-}, 10000);
+start().catch(console.error);
