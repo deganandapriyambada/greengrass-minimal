@@ -1,18 +1,37 @@
 RecipeFormatVersion: '2020-01-25'
 
 ComponentName: com.example.HelloWorld
-ComponentVersion: '1.0.1'
+ComponentVersion: '1.0.2'
 
 ComponentDescription: Hello World NodeJS component
 ComponentPublisher: Dega
+
+ComponentDependencies:
+  aws.greengrass.Cli:
+    VersionRequirement: ">=2.0.0"
+    DependencyType: HARD
+
+ComponentConfiguration:
+  DefaultConfiguration:
+    accessControl:
+      aws.greengrass.ipc.mqttproxy:
+        com.example.HelloWorld:mqtt:
+          policyDescription: "Allow publish to IoT Core via IPC"
+          operations:
+            - aws.greengrass#PublishToIoTCore
+          resources:
+            - "edge/telemetry"
 
 Manifests:
   - Platform:
       os: linux
 
     Artifacts:
-      - URI: s3://greengrass-artifact-dega-test/com.example.HelloWorld/1.0.1/index.js
+      - URI: s3://greengrass-artifact-dega-test/com.example.HelloWorld/1.0.2/index.js
 
     Lifecycle:
+      Install: |
+        npm install express
+
       Run: |
         /usr/bin/node {artifacts:path}/index.js
