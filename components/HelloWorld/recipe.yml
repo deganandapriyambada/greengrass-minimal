@@ -11,7 +11,7 @@ Manifests:
       os: linux
 
     Artifacts:
-      - URI: s3://greengrass-artifact-dega-test/com.example.HelloWorld/1.0.0/index.js
+      - URI: s3://greengrass-artifact-dega-test/com.example.HelloWorld/1.0.1/index.js
 
     Lifecycle:
       Run: |
