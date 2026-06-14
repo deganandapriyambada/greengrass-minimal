@@ -6,6 +6,11 @@ ComponentVersion: '1.0.3'
 ComponentDescription: Hello World NodeJS component
 ComponentPublisher: Dega
 
+ComponentDependencies:
+  aws.greengrass.Cli:
+    VersionRequirement: ">=2.0.0"
+    DependencyType: HARD
+
 Manifests:
   - Platform:
       os: linux
@@ -16,11 +21,6 @@ Manifests:
     Lifecycle:
       Run: |
         /usr/bin/node {artifacts:path}/index.js
-
-    ComponentDependencies:
-      aws.greengrass.Cli:
-        VersionRequirement: ">=2.0.0"
-        DependencyType: HARD
 
     ComponentConfiguration:
       DefaultConfiguration:
