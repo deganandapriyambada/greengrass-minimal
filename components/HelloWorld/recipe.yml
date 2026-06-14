@@ -12,4 +12,4 @@ Manifests:
 
     Lifecycle:
       Run: |
-        node {artifacts:path}/index.js
+        /usr/bin/node {artifacts:path}/index.js
