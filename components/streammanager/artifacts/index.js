@@ -4,7 +4,8 @@ const {
     MessageStreamDefinition,
     StrategyOnFull,
     ExportDefinition,
-    Persistence
+    Persistence,
+    ReadMessagesOptions
 } = require("./stream-manager-sdk");
 
 const app = express();
@@ -19,13 +20,34 @@ const STREAM_NAME = "pi-data-stream";
 async function init() {
     try {
         smClient = new StreamManagerClient();
+        smClient.readMessage
         smClient.onConnected(async () => {
             console.log("Stream Manager client created and connected");
             console.log("Get list of streams");
             const existingStreams = await smClient.listStreams();
             console.log(existingStreams);
             if (existingStreams.includes(STREAM_NAME)) {
-                console.log(`Stream ${STREAM_NAME} already exists.`);
+                console.log(`Stream ${STREAM_NAME} already exists. update stream config`);
+                await smClient.updateMessageStream(
+                    new MessageStreamDefinition()
+                        .withName(STREAM_NAME) // Required.
+                        .withMaxSize(268435456)  // Default is 256 MB.
+                        .withStreamSegmentSize(16777216)  // Default is 16 MB.
+                        .withTimeToLiveMillis(null)  // By default, no TTL is enabled.
+                        .withStrategyOnFull(StrategyOnFull.OverwriteOldestData)  // Required.
+                        .withPersistence(Persistence.File)  // Default is File.
+                        .withFlushOnWrite(false)  // Default is false.
+                        .withExportDefinition(
+                            new ExportDefinition()
+                                .withS3(
+                                    new S3ExportTaskDefinition()
+                                        .withBucket("greengrass-artifact-dega-test")
+                                        .withRegion("ap-southeast-1")
+                                        .withIdentifier("pi-stream-export")
+                                        .withPrefix("pi-data/")
+                                )
+                        )
+                );
                 isReady = true;
             } else {
                 console.log(`Stream ${STREAM_NAME} is not exists.`);
@@ -117,7 +139,7 @@ async function drainStream() {
     while (idleRounds < 3) { // stop after being idle 3 times
         const messages = await smClient.readMessages(
             STREAM_NAME,
-            new smData.ReadMessagesOptions()
+            new ReadMessagesOptions()
                 .withMaxMessageCount(50)
                 .withReadTimeoutMillis(2000)
         );
