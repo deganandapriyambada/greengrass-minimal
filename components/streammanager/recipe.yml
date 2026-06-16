@@ -11,6 +11,25 @@ ComponentDependencies:
     VersionRequirement: ">=2.0.0"
     DependencyType: HARD
 
+  aws.greengrass.StreamManager:
+    VersionRequirement: ">=2.0.0"
+    DependencyType: HARD
+
+ComponentConfiguration:
+  DefaultConfiguration:
+    accessControl:
+      aws.greengrass.streammanager:
+        com.streammanager.bridge:
+          permissions:
+            - action: "streammanager:put"
+              resources:
+                - "*"
+            - action: "streammanager:get"
+              resources:
+                - "*"
+            - action: "streammanager:list"
+              resources:
+                - "*"
 
 Manifests:
   - Platform:
