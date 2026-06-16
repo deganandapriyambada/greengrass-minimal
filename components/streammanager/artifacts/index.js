@@ -91,7 +91,10 @@ app.post("/pi-data", async (req, res) => {
             Buffer.from(payload)     // payload (Buffer)
         );
 
-        await smClient.appendMessage(request);
+        smClient.appendMessage(
+            STREAM_NAME,
+            Buffer.from(payload)
+        );
 
         res.json({
             status: "buffered",
