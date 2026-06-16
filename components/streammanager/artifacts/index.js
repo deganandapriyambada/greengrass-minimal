@@ -3,7 +3,6 @@ const {
     StreamManagerClient,
     MessageStreamDefinition,
     StrategyOnFull,
-    IoTCoreConfig,
     ExportDefinition
 } = require("./stream-manager-sdk");
 
@@ -47,21 +46,7 @@ async function init() {
         console.log("Existing streams:", existingStreams);
 
         if (!existingStreams.includes(STREAM_NAME)) {
-
-            const streamDefinition = new MessageStreamDefinition(
-                STREAM_NAME,
-                StrategyOnFull.OverwriteOldestData,
-                1024 * 1024 * 100,
-                undefined,
-                new ExportDefinition([
-                    new IoTCoreConfig(
-                        "pi/system/data",
-                        1
-                    )
-                ])
-            );
-
-            await smClient.createMessageStream(streamDefinition);
+            //here dega
             console.log("Created stream:", STREAM_NAME);
 
         } else {
