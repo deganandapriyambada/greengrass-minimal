@@ -15,29 +15,34 @@ let isReady = false;
 
 const STREAM_NAME = "pi-data-stream";
 
-// -------------------- utils --------------------
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
-
 // -------------------- init Stream Manager --------------------
 async function init() {
     try {
         smClient = new StreamManagerClient();
+        smClient.listStreams()
         smClient.onConnected(async () => {
             console.log("Stream Manager client created and connected");
-            await smClient.createMessageStream(
-                new MessageStreamDefinition()
-                    .withName(STREAM_NAME) // Required.
-                    .withMaxSize(268435456)  // Default is 256 MB.
-                    .withStreamSegmentSize(16777216)  // Default is 16 MB.
-                    .withTimeToLiveMillis(null)  // By default, no TTL is enabled.
-                    .withStrategyOnFull(StrategyOnFull.OverwriteOldestData)  // Required.
-                    .withPersistence(Persistence.File)  // Default is File.
-                    .withFlushOnWrite(false)  // Default is false.
-            );
-            console.log(`Stream ${STREAM_NAME} created.`);
-            isReady = true;
+            console.log("Get list of streams");
+            const streams = await smClient.listStreams();
+
+            if (streams.includes(STREAM_NAME)) {
+                console.log(`Stream ${STREAM_NAME} already exists.`);
+            } else {
+                console.log(`Stream ${STREAM_NAME} is not exists.`);
+                console.log(`Creating Streams`);
+                await smClient.createMessageStream(
+                    new MessageStreamDefinition()
+                        .withName(STREAM_NAME) // Required.
+                        .withMaxSize(268435456)  // Default is 256 MB.
+                        .withStreamSegmentSize(16777216)  // Default is 16 MB.
+                        .withTimeToLiveMillis(null)  // By default, no TTL is enabled.
+                        .withStrategyOnFull(StrategyOnFull.OverwriteOldestData)  // Required.
+                        .withPersistence(Persistence.File)  // Default is File.
+                        .withFlushOnWrite(false)  // Default is false.
+                );
+                console.log(`Stream ${STREAM_NAME} created.`);
+                isReady = true;
+            }
         });
 
         smClient.onError((err) => {
