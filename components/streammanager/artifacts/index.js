@@ -114,20 +114,25 @@ app.get("/get-message-stream", async (req, res) => {
             });
         }
 
-        const response = await smClient.readMessages({
-            streamName: STREAM_NAME,
-            maxMessageCount: 50,
-            readTimeoutMillis: 5000
-        });
+        const options = new smClient.ReadMessagesOptions()
+            .withMaxMessageCount(50)
+            .withReadTimeoutMillis(5000);
 
-        if (!response || !response.messages) return;
-        let responseArr = [];
-        for (const msg of response.messages) {
-            const payload = JSON.parse(
-                Buffer.from(msg.payload.message).toString()
-            );
-            responseArr.push({ "message": payload });
+        const messages = await smClient.readMessages(STREAM_NAME, options);
+
+        if (!messages?.length) return;
+
+        const responseArr = [];
+
+        for (const msg of messages) {
+            console.log(msg);
+            const payloadStr = Buffer.from(msg.payload).toString("utf8");
+            const payload = JSON.parse(payloadStr);
+
+            responseArr.push({ message: payload });
         }
+
+
         res.status(200).json({
             messages: responseArr
         });
