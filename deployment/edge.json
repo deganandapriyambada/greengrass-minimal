@@ -1,0 +1,11 @@
+{
+    "targetArn": "arn:aws:iot:ap-southeast-1:547268513310:thing/edge-transparant-gateway",
+    "components": {
+        "com.dataingestion": {
+            "componentVersion": "1.0.12"
+        },
+        "com.example.HelloWorld": {
+            "componentVersion": "1.0.21"
+        }
+    }
+}

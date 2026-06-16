@@ -106,6 +106,39 @@ app.get("/", (req, res) => {
     res.send("Greengrass Stream Manager bridge alive");
 });
 
+app.get("/get-message-stream", async (req, res) => {
+    try {
+        if (!isReady || !smClient) {
+            return res.status(503).json({
+                error: "Stream Manager not ready yet"
+            });
+        }
+
+        const response = await smClient.readMessages({
+            streamName: STREAM_NAME,
+            maxMessageCount: 50,
+            readTimeoutMillis: 5000
+        });
+
+        if (!response || !response.messages) return;
+        let responseArr = [];
+        for (const msg of response.messages) {
+            const payload = JSON.parse(
+                Buffer.from(msg.payload.message).toString()
+            );
+            responseArr.push({ "message": payload });
+        }
+        res.status(200).json({
+            messages: responseArr
+        });
+    } catch (err) {
+        console.log("get message stream error")
+        res.status(500).json({
+            error: err.message
+        });
+    }
+});
+
 
 async function start() {
     console.log("Starting service...");
