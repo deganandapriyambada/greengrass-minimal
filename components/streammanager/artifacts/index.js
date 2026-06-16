@@ -113,10 +113,17 @@ app.get("/", (req, res) => {
 console.log("Starting data ingestion pipeline");
 
 
-await init();   // MUST run first
+async function start() {
+    console.log("Starting service...");
 
-console.log("Stream Manager ready");
+    await init();
 
-app.listen(4002, () => {
-    console.log("Listening on port 4002");
-});
+    app.listen(4002, () => {
+        console.log("Listening on port 4002");
+    });
+
+    // keep alive in Greengrass
+    setInterval(() => { }, 3600000);
+}
+
+start();
