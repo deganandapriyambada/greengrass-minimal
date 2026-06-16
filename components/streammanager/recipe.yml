@@ -39,5 +39,6 @@ Manifests:
 
     Lifecycle:
       Run: |
+        set -e
         cd {artifacts:decompressedPath}/stream-mgr
-        /usr/bin/node index.js
+        exec /usr/bin/node index.js

@@ -4,11 +4,8 @@ const {
     MessageStreamDefinition,
     StrategyOnFull,
     IoTCoreConfig,
-    ExportDefinition,
-    AppendMessageRequest
+    ExportDefinition
 } = require("./stream-manager-sdk");
-
-const { v4: uuidv4 } = require("uuid");
 
 const app = express();
 app.use(express.json());
@@ -28,7 +25,6 @@ async function init() {
         smClient = new StreamManagerClient();
         console.log("Stream Manager client created");
 
-        // wait for Stream Manager to be ready (important in Greengrass)
         let listResp;
         let existingStreams = [];
 
@@ -55,7 +51,7 @@ async function init() {
             const streamDefinition = new MessageStreamDefinition(
                 STREAM_NAME,
                 StrategyOnFull.OverwriteOldestData,
-                1024 * 1024 * 100, // 100MB
+                1024 * 1024 * 100,
                 undefined,
                 new ExportDefinition([
                     new IoTCoreConfig(
@@ -85,19 +81,16 @@ app.post("/pi-data", async (req, res) => {
     try {
         const payload = JSON.stringify(req.body);
 
-        const request = new AppendMessageRequest(
-            "128371923791",          // requestId (string)
-            STREAM_NAME,             // name (NOT streamName)
-            Buffer.from(payload)     // payload (Buffer)
-        );
-
-        smClient.appendMessage(
+        // IMPORTANT: await the real Stream Manager call
+        await smClient.appendMessage(
             STREAM_NAME,
             Buffer.from(payload)
         );
 
+        console.log("Message sent to Stream Manager:", payload);
+
         res.json({
-            status: "buffered",
+            status: "sent",
             stream: STREAM_NAME,
             size: payload.length
         });
@@ -116,8 +109,15 @@ app.get("/", (req, res) => {
     res.send("Greengrass Stream Manager bridge alive");
 });
 
-// -------------------- start --------------------
-app.listen(4002, async () => {
-    await init();
-    console.log("Listening on port 4002");
-});
+// -------------------- start (FIXED) --------------------
+async function start() {
+    await init();   // MUST run first
+
+    console.log("Stream Manager ready");
+
+    app.listen(4002, () => {
+        console.log("Listening on port 4002");
+    });
+}
+
+start();
