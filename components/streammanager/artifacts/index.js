@@ -83,10 +83,10 @@ app.post("/pi-data", async (req, res) => {
     try {
         const payload = JSON.stringify(req.body);
 
-        const request = new AppendMessageRequest(
-            STREAM_NAME,
-            Buffer.from(payload)
-        );
+        const request = new AppendMessageRequest({
+            streamName: STREAM_NAME,
+            data: Buffer.from(payload)
+        });
 
         await smClient.appendMessage(request);
 
