@@ -1,7 +1,7 @@
 RecipeFormatVersion: '2020-01-25'
 
-ComponentName: com.example.HelloWorld
-ComponentVersion: '1.0.0'
+ComponentName: com.streammanager
+ComponentVersion: '1.0.1'
 
 ComponentDescription: Greengrass resilient data ingestion with persisted queue on disk and buffering
 ComponentPublisher: Dega
@@ -20,16 +20,13 @@ ComponentConfiguration:
     accessControl:
       aws.greengrass.streammanager:
         com.streammanager.bridge:
-          permissions:
-            - action: "streammanager:put"
-              resources:
-                - "*"
-            - action: "streammanager:get"
-              resources:
-                - "*"
-            - action: "streammanager:list"
-              resources:
-                - "*"
+          policyDescription: "Allow Stream Manager access"
+          operations:
+            - aws.greengrass#PutMessage
+            - aws.greengrass#GetMessages
+            - aws.greengrass#ListStreams
+          resources:
+            - "*"
 
 Manifests:
   - Platform:
