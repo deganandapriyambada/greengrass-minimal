@@ -3,7 +3,8 @@ const {
     StreamManagerClient,
     MessageStreamDefinition,
     StrategyOnFull,
-    ExportDefinition
+    ExportDefinition,
+    Persistence
 } = require("./stream-manager-sdk");
 
 const app = express();
