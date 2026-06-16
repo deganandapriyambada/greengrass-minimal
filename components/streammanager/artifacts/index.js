@@ -19,11 +19,11 @@ const STREAM_NAME = "pi-data-stream";
 async function init() {
     try {
         smClient = new StreamManagerClient();
-        smClient.listStreams()
         smClient.onConnected(async () => {
             console.log("Stream Manager client created and connected");
             console.log("Get list of streams");
             const resp = await smClient.listStreams();
+            console.log(resp);
             const existingStreams = resp.streams || [];
             if (existingStreams.includes(STREAM_NAME)) {
                 console.log(`Stream ${STREAM_NAME} already exists.`);
