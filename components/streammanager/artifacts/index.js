@@ -11,6 +11,7 @@ const app = express();
 app.use(express.json());
 
 let smClient;
+let isReady = false;
 
 const STREAM_NAME = "pi-data-stream";
 
@@ -34,18 +35,13 @@ async function init() {
                     .withStrategyOnFull(StrategyOnFull.OverwriteOldestData)  // Required.
                     .withPersistence(Persistence.File)  // Default is File.
                     .withFlushOnWrite(false)  // Default is false.
-                    .withExportDefinition(  // Optional. Choose where/how the stream is exported to the AWS Cloud.
-                        new ExportDefinition()
-                            .withKinesis(null)
-                            .withIotAnalytics(null)
-                            .withIotSiteWise(null)
-                            .withS3(null)
-                    )
             );
             console.log(`Stream ${STREAM_NAME} created.`);
+            isReady = true;
         });
 
         smClient.onError((err) => {
+            isReady = false;
             console.log(`StreamManager Error : ${err} `);
         });
 
@@ -58,6 +54,12 @@ async function init() {
 // -------------------- HTTP endpoint --------------------
 app.post("/pi-data", async (req, res) => {
     try {
+
+        if (!isReady || !smClient) {
+            return res.status(503).json({
+                error: "Stream Manager not ready yet"
+            });
+        }
         const payload = JSON.stringify(req.body);
 
         // IMPORTANT: await the real Stream Manager call
