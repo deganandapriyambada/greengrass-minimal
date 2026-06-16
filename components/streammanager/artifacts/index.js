@@ -88,8 +88,6 @@ app.get("/", (req, res) => {
     res.send("Greengrass Stream Manager bridge alive");
 });
 
-console.log("Starting data ingestion pipeline");
-
 
 async function start() {
     console.log("Starting service...");
