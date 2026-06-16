@@ -41,11 +41,11 @@ async function init() {
                         .withExportDefinition(
                             new ExportDefinition()
                                 .withS3(
-                                    new S3ExportTaskDefinition()
-                                        .withBucket("greengrass-artifact-dega-test")
-                                        .withRegion("ap-southeast-1")
-                                        .withIdentifier("pi-stream-export")
-                                        .withPrefix("pi-data/")
+                                    new S3ExportTaskDefinition(
+                                        null, // inputUrl handled internally by Stream Manager
+                                        "greengrass-artifact-dega-test",
+                                        "pi-data/my-object-key"
+                                    )
                                 )
                         )
                 );
@@ -65,11 +65,11 @@ async function init() {
                         .withExportDefinition(
                             new ExportDefinition()
                                 .withS3(
-                                    new S3ExportTaskDefinition()
-                                        .withBucket("greengrass-artifact-dega-test")
-                                        .withRegion("ap-southeast-1")
-                                        .withIdentifier("pi-stream-export")
-                                        .withPrefix("pi-data/")
+                                    new S3ExportTaskDefinition(
+                                        null, // inputUrl handled internally by Stream Manager
+                                        "greengrass-artifact-dega-test",
+                                        "pi-data/my-object-key"
+                                    )
                                 )
                         )
                 );
