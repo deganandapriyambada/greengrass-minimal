@@ -8,6 +8,8 @@ const {
     AppendMessageRequest
 } = require("./stream-manager-sdk");
 
+const { v4: uuidv4 } = require("uuid");
+
 const app = express();
 app.use(express.json());
 
@@ -84,6 +86,7 @@ app.post("/pi-data", async (req, res) => {
         const payload = JSON.stringify(req.body);
 
         const request = new AppendMessageRequest({
+            requestId: uuidv4(),
             streamName: STREAM_NAME,
             data: Buffer.from(payload)
         });

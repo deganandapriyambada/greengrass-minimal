@@ -1,7 +1,7 @@
 RecipeFormatVersion: '2020-01-25'
 
 ComponentName: com.streammanager
-ComponentVersion: '1.0.2'
+ComponentVersion: '1.0.3'
 
 ComponentDescription: Greengrass resilient data ingestion with persisted queue on disk and buffering
 ComponentPublisher: Dega
@@ -33,7 +33,7 @@ Manifests:
       os: linux
 
     Artifacts:
-      - URI: s3://greengrass-artifact-dega-test/com.streammanager/1.0.2/stream-mgr.zip
+      - URI: s3://greengrass-artifact-dega-test/com.streammanager/1.0.3/stream-mgr.zip
         Unarchive: ZIP
 
     Lifecycle:
