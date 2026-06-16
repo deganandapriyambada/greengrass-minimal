@@ -1,0 +1,44 @@
+RecipeFormatVersion: '2020-01-25'
+
+ComponentName: com.forwarder
+ComponentVersion: '1.0.0'
+
+ComponentDescription: Forwarder
+ComponentPublisher: Dega
+
+ComponentDependencies:
+  aws.greengrass.Cli:
+    VersionRequirement: ">=2.0.0"
+    DependencyType: HARD
+
+  aws.greengrass.StreamManager:
+    VersionRequirement: ">=2.0.0"
+    DependencyType: HARD
+
+ComponentConfiguration:
+  DefaultConfiguration:
+    accessControl:
+      aws.greengrass.streammanager:
+        com.forwarder.bridge:
+          policyDescription: "Allow Stream Manager access"
+          operations:
+            - aws.greengrass#PutMessage
+            - aws.greengrass#ListStreams
+            - aws.greengrass#DescribeStream
+            - aws.greengrass#ReadMessages
+          resources:
+            - "*"
+
+Manifests:
+  - Platform:
+      os: linux
+
+    Artifacts:
+      - URI: s3://greengrass-artifact-dega-test/com.forwarder/1.0.0/forwarder.zip
+        Unarchive: ZIP
+
+    Lifecycle:
+      Run: |
+        set -e
+        cd {artifacts:decompressedPath}/stream-mgr
+        exec /usr/bin/node index.js

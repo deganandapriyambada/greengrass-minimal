@@ -22,7 +22,6 @@ const STREAM_NAME = "pi-data-stream";
 async function init() {
     try {
         smClient = new StreamManagerClient();
-        smClient.readMessage
         smClient.onConnected(async () => {
             console.log("Stream Manager client created and connected");
             console.log("Get list of streams");
@@ -34,24 +33,11 @@ async function init() {
                     new MessageStreamDefinition()
                         .withName(STREAM_NAME) // Required.
                         .withMaxSize(268435456)  // Default is 256 MB.
-                        .withStreamSegmentSize(262144)  // Default is 16 MB.
+                        .withStreamSegmentSize(16777216)  // Default is 16 MB.
                         .withTimeToLiveMillis(null)  // By default, no TTL is enabled.
                         .withStrategyOnFull(StrategyOnFull.OverwriteOldestData)  // Required.
                         .withPersistence(Persistence.File)  // Default is File.
                         .withFlushOnWrite(true)  // Default is false.
-                        .withExportDefinition(
-                            new ExportDefinition(
-                                null,
-                                null,
-                                null,
-                                null,
-                                [
-                                    new S3ExportTaskExecutorConfig(
-                                        "pi-stream-export-dega" // identifier (REQUIRED)
-                                    )
-                                ]
-                            )
-                        )
                 );
                 isReady = true;
             } else {
@@ -61,24 +47,11 @@ async function init() {
                     new MessageStreamDefinition()
                         .withName(STREAM_NAME) // Required.
                         .withMaxSize(268435456)  // Default is 256 MB.
-                        .withStreamSegmentSize(262144)  // Default is 16 MB.
+                        .withStreamSegmentSize(16777216)  // Default is 16 MB.
                         .withTimeToLiveMillis(null)  // By default, no TTL is enabled.
                         .withStrategyOnFull(StrategyOnFull.OverwriteOldestData)  // Required.
                         .withPersistence(Persistence.File)  // Default is File.
                         .withFlushOnWrite(true)  // Default is false.
-                        .withExportDefinition(
-                            new ExportDefinition(
-                                null,
-                                null,
-                                null,
-                                null,
-                                [
-                                    new S3ExportTaskExecutorConfig(
-                                        "pi-stream-export-dega" // identifier (REQUIRED)
-                                    )
-                                ]
-                            )
-                        )
                 );
                 console.log(`Stream ${STREAM_NAME} created.`);
                 isReady = true;
