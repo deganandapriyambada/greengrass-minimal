@@ -106,18 +106,17 @@ app.post("/pi-data", async (req, res) => {
 
 // -------------------- health check --------------------
 app.get("/", (req, res) => {
+    console.log("Do Health Check");
     res.send("Greengrass Stream Manager bridge alive");
 });
 
-// -------------------- start (FIXED) --------------------
-async function start() {
-    await init();   // MUST run first
+console.log("Starting data ingestion pipeline");
 
-    console.log("Stream Manager ready");
 
-    app.listen(4002, () => {
-        console.log("Listening on port 4002");
-    });
-}
+await init();   // MUST run first
 
-start();
+console.log("Stream Manager ready");
+
+app.listen(4002, () => {
+    console.log("Listening on port 4002");
+});
