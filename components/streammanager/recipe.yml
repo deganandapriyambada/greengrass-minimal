@@ -1,7 +1,7 @@
 RecipeFormatVersion: '2020-01-25'
 
-ComponentName: com.streammanager
-ComponentVersion: '1.0.7'
+ComponentName: com.dataingestion
+ComponentVersion: '1.0.0'
 
 ComponentDescription: Greengrass resilient data ingestion with persisted queue on disk and buffering
 ComponentPublisher: Dega
@@ -19,12 +19,13 @@ ComponentConfiguration:
   DefaultConfiguration:
     accessControl:
       aws.greengrass.streammanager:
-        com.streammanager.bridge:
+        com.dataingestion.bridge:
           policyDescription: "Allow Stream Manager access"
           operations:
             - aws.greengrass#PutMessage
-            - aws.greengrass#GetMessages
             - aws.greengrass#ListStreams
+            - aws.greengrass#DescribeStream
+            - aws.greengrass#ReadMessages
           resources:
             - "*"
 
@@ -33,7 +34,7 @@ Manifests:
       os: linux
 
     Artifacts:
-      - URI: s3://greengrass-artifact-dega-test/com.streammanager/1.0.7/stream-mgr.zip
+      - URI: s3://greengrass-artifact-dega-test/com.dataingestion/1.0.0/stream-mgr.zip
         Unarchive: ZIP
 
     Lifecycle:
