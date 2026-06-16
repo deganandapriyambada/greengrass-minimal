@@ -23,6 +23,7 @@ async function init() {
             console.log("Stream Manager client created and connected");
             console.log("Get list of streams");
             const existingStreams = await smClient.listStreams();
+            console.log(existingStreams);
             if (existingStreams.includes(STREAM_NAME)) {
                 console.log(`Stream ${STREAM_NAME} already exists.`);
             } else {
