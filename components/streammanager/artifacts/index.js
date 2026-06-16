@@ -56,9 +56,6 @@ async function init() {
                 console.log(`Stream ${STREAM_NAME} created.`);
                 isReady = true;
             }
-            //drainStream().catch(err => {
-            //console.error("drainStream crashed:", err);
-            //});
         });
 
         smClient.onError((err) => {
@@ -111,38 +108,6 @@ app.get("/", (req, res) => {
     console.log("Do Health Check");
     res.send("Greengrass Stream Manager bridge alive");
 });
-
-const sleep = (ms) => new Promise(r => setTimeout(r, ms));
-
-async function drainStream() {
-    let idleRounds = 0;
-
-    while (idleRounds < 3) { // stop after being idle 3 times
-        const messages = await smClient.readMessages(
-            STREAM_NAME,
-            new ReadMessagesOptions()
-                .withMaxMessageCount(50)
-                .withReadTimeoutMillis(2000)
-        );
-
-        if (messages && messages.length > 0) {
-            idleRounds = 0;
-
-            for (const msg of messages) {
-                console.log(msg);
-                const payload = JSON.parse(
-                    Buffer.from(msg.payload).toString("utf8")
-                );
-                console.log(payload);
-            }
-        } else {
-            idleRounds++;
-            await sleep(500); // small backoff when idle
-        }
-    }
-
-    console.log("Stream caught up (idle).");
-}
 
 async function start() {
     console.log("Starting service...");
