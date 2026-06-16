@@ -39,19 +39,6 @@ async function init() {
                         .withStrategyOnFull(StrategyOnFull.OverwriteOldestData)  // Required.
                         .withPersistence(Persistence.File)  // Default is File.
                         .withFlushOnWrite(false)  // Default is false.
-                        .withExportDefinition(
-                            new ExportDefinition(
-                                null,
-                                null,
-                                null,
-                                null,
-                                [
-                                    new S3ExportTaskExecutorConfig(
-                                        "pi-stream-export-dega" // identifier (REQUIRED)
-                                    )
-                                ]
-                            )
-                        )
                 );
                 isReady = true;
             } else {
@@ -66,19 +53,6 @@ async function init() {
                         .withStrategyOnFull(StrategyOnFull.OverwriteOldestData)  // Required.
                         .withPersistence(Persistence.File)  // Default is File.
                         .withFlushOnWrite(false)  // Default is false.
-                        .withExportDefinition(
-                            new ExportDefinition(
-                                null,
-                                null,
-                                null,
-                                null,
-                                [
-                                    new S3ExportTaskExecutorConfig(
-                                        "pi-stream-export-dega" // identifier (REQUIRED)
-                                    )
-                                ]
-                            )
-                        )
                 );
                 console.log(`Stream ${STREAM_NAME} created.`);
                 isReady = true;
