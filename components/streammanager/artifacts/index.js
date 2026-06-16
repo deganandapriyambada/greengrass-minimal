@@ -57,9 +57,9 @@ async function init() {
                 console.log(`Stream ${STREAM_NAME} created.`);
                 isReady = true;
             }
-            drainStream().catch(err => {
-                console.error("drainStream crashed:", err);
-            });
+            //drainStream().catch(err => {
+            //console.error("drainStream crashed:", err);
+            //});
         });
 
         smClient.onError((err) => {
