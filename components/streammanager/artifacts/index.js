@@ -26,6 +26,7 @@ async function init() {
             console.log(existingStreams);
             if (existingStreams.includes(STREAM_NAME)) {
                 console.log(`Stream ${STREAM_NAME} already exists.`);
+                isReady = true;
             } else {
                 console.log(`Stream ${STREAM_NAME} is not exists.`);
                 console.log(`Creating Streams`);
@@ -38,6 +39,16 @@ async function init() {
                         .withStrategyOnFull(StrategyOnFull.OverwriteOldestData)  // Required.
                         .withPersistence(Persistence.File)  // Default is File.
                         .withFlushOnWrite(false)  // Default is false.
+                        .withExportDefinition(
+                            new ExportDefinition()
+                                .withS3(
+                                    new S3ExportTaskDefinition()
+                                        .withBucket("greengrass-artifact-dega-test")
+                                        .withRegion("ap-southeast-1")
+                                        .withIdentifier("pi-stream-export")
+                                        .withPrefix("pi-data/")
+                                )
+                        )
                 );
                 console.log(`Stream ${STREAM_NAME} created.`);
                 isReady = true;
