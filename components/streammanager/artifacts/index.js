@@ -6,7 +6,8 @@ const {
     ExportDefinition,
     Persistence,
     ReadMessagesOptions,
-    S3ExportTaskDefinition
+    S3ExportTaskDefinition,
+    S3ExportTaskExecutorConfig
 } = require("./stream-manager-sdk");
 
 const app = express();
@@ -39,14 +40,17 @@ async function init() {
                         .withPersistence(Persistence.File)  // Default is File.
                         .withFlushOnWrite(false)  // Default is false.
                         .withExportDefinition(
-                            new ExportDefinition()
-                                .withS3(
-                                    new S3ExportTaskDefinition(
-                                        null, // inputUrl handled internally by Stream Manager
-                                        "greengrass-artifact-dega-test",
-                                        "pi-data/my-object-key"
+                            new ExportDefinition(
+                                null,
+                                null,
+                                null,
+                                null,
+                                [
+                                    new S3ExportTaskExecutorConfig(
+                                        "pi-stream-export-dega" // identifier (REQUIRED)
                                     )
-                                )
+                                ]
+                            )
                         )
                 );
                 isReady = true;
@@ -63,14 +67,17 @@ async function init() {
                         .withPersistence(Persistence.File)  // Default is File.
                         .withFlushOnWrite(false)  // Default is false.
                         .withExportDefinition(
-                            new ExportDefinition()
-                                .withS3(
-                                    new S3ExportTaskDefinition(
-                                        null, // inputUrl handled internally by Stream Manager
-                                        "greengrass-artifact-dega-test",
-                                        "pi-data/my-object-key"
+                            new ExportDefinition(
+                                null,
+                                null,
+                                null,
+                                null,
+                                [
+                                    new S3ExportTaskExecutorConfig(
+                                        "pi-stream-export-dega" // identifier (REQUIRED)
                                     )
-                                )
+                                ]
+                            )
                         )
                 );
                 console.log(`Stream ${STREAM_NAME} created.`);
