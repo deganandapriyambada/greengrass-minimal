@@ -5,7 +5,8 @@ const {
     StrategyOnFull,
     ExportDefinition,
     Persistence,
-    ReadMessagesOptions
+    ReadMessagesOptions,
+    S3ExportTaskDefinition
 } = require("./stream-manager-sdk");
 
 const app = express();
