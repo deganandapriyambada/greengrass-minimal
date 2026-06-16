@@ -22,38 +22,31 @@ function sleep(ms) {
 async function init() {
     try {
         smClient = new StreamManagerClient();
-        console.log("Stream Manager client created");
+        smClient.onConnected(async () => {
+            console.log("Stream Manager client created and connected");
+            await smClient.createMessageStream(
+                new MessageStreamDefinition()
+                    .withName(STREAM_NAME) // Required.
+                    .withMaxSize(268435456)  // Default is 256 MB.
+                    .withStreamSegmentSize(16777216)  // Default is 16 MB.
+                    .withTimeToLiveMillis(null)  // By default, no TTL is enabled.
+                    .withStrategyOnFull(StrategyOnFull.OverwriteOldestData)  // Required.
+                    .withPersistence(Persistence.File)  // Default is File.
+                    .withFlushOnWrite(false)  // Default is false.
+                    .withExportDefinition(  // Optional. Choose where/how the stream is exported to the AWS Cloud.
+                        new ExportDefinition()
+                            .withKinesis(null)
+                            .withIotAnalytics(null)
+                            .withIotSiteWise(null)
+                            .withS3(null)
+                    )
+            );
+            console.log(`Stream ${STREAM_NAME} created.`);
+        });
 
-        let listResp;
-        let existingStreams = [];
-
-        for (let i = 0; i < 10; i++) {
-            try {
-                listResp = await smClient.listStreams();
-
-                existingStreams =
-                    listResp.streams ||
-                    listResp.streamNames ||
-                    [];
-
-                break;
-            } catch (err) {
-                console.log("Waiting for Stream Manager...");
-                await sleep(2000);
-            }
-        }
-
-        console.log("Existing streams:", existingStreams);
-
-        if (!existingStreams.includes(STREAM_NAME)) {
-            //here dega
-            console.log("Created stream:", STREAM_NAME);
-
-        } else {
-            console.log("Stream already exists:", STREAM_NAME);
-        }
-
-        console.log("Stream Manager ready");
+        smClient.onError((err) => {
+            console.log(`StreamManager Error : ${err} `);
+        });
 
     } catch (err) {
         console.error("Stream Manager init failed:", err);
