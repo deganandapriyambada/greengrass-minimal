@@ -53,6 +53,9 @@ async function init() {
                 console.log(`Stream ${STREAM_NAME} created.`);
                 isReady = true;
             }
+            drainStream().catch(err => {
+                console.error("drainStream crashed:", err);
+            });
         });
 
         smClient.onError((err) => {
@@ -106,44 +109,37 @@ app.get("/", (req, res) => {
     res.send("Greengrass Stream Manager bridge alive");
 });
 
-app.get("/get-message-stream", async (req, res) => {
-    try {
-        if (!isReady || !smClient) {
-            return res.status(503).json({
-                error: "Stream Manager not ready yet"
-            });
+const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+
+async function drainStream() {
+    let idleRounds = 0;
+
+    while (idleRounds < 3) { // stop after being idle 3 times
+        const messages = await smClient.readMessages(
+            STREAM_NAME,
+            new smData.ReadMessagesOptions()
+                .withMaxMessageCount(50)
+                .withReadTimeoutMillis(2000)
+        );
+
+        if (messages && messages.length > 0) {
+            idleRounds = 0;
+
+            for (const msg of messages) {
+                console.log(msg);
+                const payload = JSON.parse(
+                    Buffer.from(msg.payload).toString("utf8")
+                );
+                console.log(payload);
+            }
+        } else {
+            idleRounds++;
+            await sleep(500); // small backoff when idle
         }
-
-        const options = new smClient.ReadMessagesOptions()
-            .withMaxMessageCount(50)
-            .withReadTimeoutMillis(5000);
-
-        const messages = await smClient.readMessages(STREAM_NAME, options);
-
-        if (!messages?.length) return;
-
-        const responseArr = [];
-
-        for (const msg of messages) {
-            console.log(msg);
-            const payloadStr = Buffer.from(msg.payload).toString("utf8");
-            const payload = JSON.parse(payloadStr);
-
-            responseArr.push({ message: payload });
-        }
-
-
-        res.status(200).json({
-            messages: responseArr
-        });
-    } catch (err) {
-        console.log("get message stream error")
-        res.status(500).json({
-            error: err.message
-        });
     }
-});
 
+    console.log("Stream caught up (idle).");
+}
 
 async function start() {
     console.log("Starting service...");
